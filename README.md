@@ -28,10 +28,10 @@ pod install;open GitHubAPISampleApp.xcworkspace
 
 - [ ] Lista de repositórios mais populares de Swift
     - [ ] Paginação (scroll infinito)
-    - [ ] Informações do repositorio por item: nome, descrição, autor (nome/foto), número de estrelas e número de forks
+    - [x] Informações do repositorio por item: nome, descrição, autor (nome/foto), número de estrelas e número de forks
     - [ ] Navegação do item para uma página com a lista de pull requests
 - [ ] Lista de pull requests
-    - [ ] Informações do pull request por item: título, autor (nome/foto), data e body
+    - [x] Informações do pull request por item: título, autor (nome/foto), data e body
     - [ ] Navegação (modal) do item para uma o url da pull request em webView
 
 ## Dependências

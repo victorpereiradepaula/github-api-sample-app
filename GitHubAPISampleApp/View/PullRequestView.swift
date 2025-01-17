@@ -8,6 +8,13 @@
 import UIKit
 
 final class PullRequestView: UIView {
+    private lazy var dateLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: .smallSpacing, weight: .light)
+        label.textAlignment = .right
+        return label
+    }()
+    
     private lazy var descriptionView = DescriptionView(title: title, description: descriptionText)
     
     private lazy var avatarView = AvatarView(name: authorName, avatarURL: authorAvatarURL)
@@ -24,12 +31,13 @@ final class PullRequestView: UIView {
     }()
     
     private lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [descriptionView, avatarView])
+        let stackView = UIStackView(arrangedSubviews: [dateLabel, descriptionView, avatarView])
         stackView.axis = .vertical
         stackView.spacing = .smallSpacing
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.layoutMargins = .init(top: .smallSpacing, left: .smallSpacing,
-                                        bottom: .smallSpacing, right: .smallSpacing)
+                                        bottom: .mediumSpacing, right: .smallSpacing)
+        stackView.setCustomSpacing(.zero, after: dateLabel)
         return stackView
     }()
     
@@ -46,13 +54,16 @@ final class PullRequestView: UIView {
     private let authorAvatarURL: URL?
     private let state: PullRequestState?
     
-    init(title: String, description: String, authorName: String, authorAvatarURL: URL?, state: PullRequestState?) {
+    init(title: String, description: String, date: String, authorName: String, authorAvatarURL: URL?, state: PullRequestState?) {
         self.title = title
         self.descriptionText = description
         self.authorName = authorName
         self.authorAvatarURL = authorAvatarURL
         self.state = state
         super.init(frame: .zero)
+        
+        dateLabel.text = date
+        
         setupView()
     }
     
