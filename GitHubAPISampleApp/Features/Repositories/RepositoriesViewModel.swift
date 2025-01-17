@@ -7,14 +7,10 @@
 
 import Alamofire
 
-protocol TableViewDelegate: AnyObject {
-    func reloadData()
-}
-
 final class RepositoriesViewModel: TableViewModelProtocol {
     typealias T = Repository
     
-    weak var delegate: TableViewDelegate?
+    weak var delegate: RepositoriesTableViewDelegate?
     
     var title = "Repositórios Swift"
     var currentPage = 1
@@ -38,7 +34,7 @@ final class RepositoriesViewModel: TableViewModelProtocol {
     }
     
     func didSelectItem(at indexPath: IndexPath) {
-        print(indexPath)
+        delegate?.goToRullRequests(items[indexPath.row].fullName)
     }
     
     func fetchRepositories() {

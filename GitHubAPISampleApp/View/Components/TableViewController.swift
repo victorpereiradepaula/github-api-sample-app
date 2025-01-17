@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol TableViewDelegate: AnyObject {
+    func reloadData()
+}
+
 protocol TableViewModelProtocol: AnyObject {
     associatedtype T: Codable
     var title: String { get }
@@ -21,6 +25,8 @@ class TableViewController<V: TableViewModelProtocol>: UITableViewController, Tab
     init(viewModel: V) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        
+        self.title = viewModel.title
     }
     
     @available(*, unavailable)
@@ -45,6 +51,5 @@ class TableViewController<V: TableViewModelProtocol>: UITableViewController, Tab
     func reloadData() {
         tableView.reloadData()
     }
-    
 }
 
