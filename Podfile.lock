@@ -9,12 +9,14 @@ PODS:
     - CwlCatchException (~> 2.2.1)
     - CwlMachBadInstructionHandler (~> 2.2.2)
     - CwlPosixPreconditionTesting (~> 2.2.2)
+  - Kingfisher (8.1.3)
   - Nimble (13.7.1):
     - CwlPreconditionTesting (~> 2.2.0)
   - Quick (7.6.2)
 
 DEPENDENCIES:
   - Alamofire
+  - Kingfisher
   - Nimble
   - Quick
 
@@ -26,6 +28,7 @@ SPEC REPOS:
     - CwlMachBadInstructionHandler
     - CwlPosixPreconditionTesting
     - CwlPreconditionTesting
+    - Kingfisher
     - Nimble
     - Quick
 
@@ -36,9 +39,10 @@ SPEC CHECKSUMS:
   CwlMachBadInstructionHandler: dae4fdd124d45c9910ac240287cc7b898f4502a1
   CwlPosixPreconditionTesting: ecd095aa2129e740b44301c34571e8d85906fb88
   CwlPreconditionTesting: 67a0047dd4de4382b93442c0e3f25207f984f35a
+  Kingfisher: f2af9028b16baf9dc6c07c570072bc41cbf009ef
   Nimble: 317d713c30c3336dd8571da1889f7ec3afc626e8
   Quick: b8bec97cd4b9f21da0472d45580f763b801fc353
 
-PODFILE CHECKSUM: 05672d20fed5cfa67785cc16757e05b75564c3ed
+PODFILE CHECKSUM: 34f5340131808aa3e9041a77de7570c05a6b252a
 
 COCOAPODS: 1.16.2
