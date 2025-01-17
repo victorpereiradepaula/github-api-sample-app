@@ -24,9 +24,8 @@ final class DescriptionView: UIView {
     
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 8
+        stackView.spacing = .smallSpacing
         return stackView
     }()
     
@@ -41,12 +40,6 @@ final class DescriptionView: UIView {
     required init?(coder: NSCoder) { nil }
     
     private func setupView() {
-        addSubview(stackView)
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
+        addSubViewWithAllSideConstraints(stackView)
     }
 }

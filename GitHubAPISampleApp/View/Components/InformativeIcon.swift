@@ -25,7 +25,6 @@ final class InformativeIcon: UIView {
     
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [iconImageView, informativeLabel])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
         stackView.spacing = 4
         stackView.distribution = .fill
@@ -46,15 +45,10 @@ final class InformativeIcon: UIView {
     required init?(coder: NSCoder) { nil }
     
     private func setupView() {
-        addSubview(stackView)
+        addSubViewWithAllSideConstraints(stackView)
         NSLayoutConstraint.activate([
             iconImageView.widthAnchor.constraint(equalToConstant: 24),
-            iconImageView.heightAnchor.constraint(equalTo: iconImageView.widthAnchor),
-            
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            iconImageView.heightAnchor.constraint(equalTo: iconImageView.widthAnchor)
         ])
     }
 }

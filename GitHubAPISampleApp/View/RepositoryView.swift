@@ -20,17 +20,17 @@ final class RepositoryView: UIView {
         let stackView = UIStackView(arrangedSubviews: [forkInformativeIcon, starsInformativeIcon, UIView()])
         stackView.axis = .horizontal
         stackView.distribution = .fill
-        stackView.spacing = 16
+        stackView.spacing = .mediumSpacing
         return stackView
     }()
     
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [avatarView, descriptionView, informationStackView])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 8
+        stackView.spacing = .smallSpacing
         stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = .init(top: 8, left: 16, bottom: 8, right: 16)
+        stackView.layoutMargins = .init(top: .smallSpacing, left: .mediumSpacing,
+                                        bottom: .smallSpacing, right: .mediumSpacing)
         return stackView
     }()
     
@@ -56,12 +56,6 @@ final class RepositoryView: UIView {
     required init?(coder: NSCoder) { nil }
     
     private func setupView() {
-        addSubview(stackView)
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
+        addSubViewWithAllSideConstraints(stackView)
     }
 }

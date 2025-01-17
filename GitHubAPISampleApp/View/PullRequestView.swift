@@ -10,28 +10,48 @@ import UIKit
 final class PullRequestView: UIView {
     private lazy var descriptionView = DescriptionView(title: title, description: descriptionText)
     
-    private lazy var avatarView = AvatarView(name: name, avatarURL: avatarURL)
+    private lazy var avatarView = AvatarView(name: authorName, avatarURL: authorAvatarURL)
+    
+    private lazy var stateView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        if let state {
+            view.backgroundColor = state == .closed ? .red : .systemGreen
+        } else {
+            view.backgroundColor = .yellow
+        }
+        return view
+    }()
     
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [descriptionView, avatarView])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 8
+        stackView.spacing = .smallSpacing
         stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = .init(top: 8, left: 16, bottom: 8, right: 16)
+        stackView.layoutMargins = .init(top: .smallSpacing, left: .smallSpacing,
+                                        bottom: .smallSpacing, right: .smallSpacing)
+        return stackView
+    }()
+    
+    private lazy var stateStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [stateView, stackView])
+        stackView.axis = .horizontal
+        stackView.spacing = .smallSpacing
         return stackView
     }()
     
     private let title: String
     private let descriptionText: String
-    private let name: String
-    private let avatarURL: URL?
+    private let authorName: String
+    private let authorAvatarURL: URL?
+    private let state: PullRequestState?
     
-    init(title: String, description: String, name: String, avatarURL: URL?) {
+    init(title: String, description: String, authorName: String, authorAvatarURL: URL?, state: PullRequestState?) {
         self.title = title
         self.descriptionText = description
-        self.name = name
-        self.avatarURL = avatarURL
+        self.authorName = authorName
+        self.authorAvatarURL = authorAvatarURL
+        self.state = state
         super.init(frame: .zero)
         setupView()
     }
@@ -40,12 +60,9 @@ final class PullRequestView: UIView {
     required init?(coder: NSCoder) { nil }
     
     private func setupView() {
-        addSubview(stackView)
+        addSubViewWithAllSideConstraints(stateStackView)
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            stateView.widthAnchor.constraint(equalToConstant: 8)
         ])
     }
 }

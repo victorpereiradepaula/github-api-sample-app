@@ -13,4 +13,10 @@ struct PullRequest: Codable {
     let user: User
     let body: String
     let createdAt: String
+    let state: PullRequestState?
+}
+
+enum PullRequestState: String, Codable {
+    case open
+    case closed
 }

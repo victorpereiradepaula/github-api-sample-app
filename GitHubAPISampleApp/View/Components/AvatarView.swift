@@ -29,7 +29,6 @@ final class AvatarView: UIView {
     
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [imageView, nameLabel, UIView()])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
         stackView.distribution = .fill
         stackView.spacing = 4
@@ -50,16 +49,11 @@ final class AvatarView: UIView {
     required init?(coder: NSCoder) { nil }
     
     private func setupView() {
-        addSubview(stackView)
+        addSubViewWithAllSideConstraints(stackView)
         
         NSLayoutConstraint.activate([
             imageView.widthAnchor.constraint(equalToConstant: imageSize),
-            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
-            
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor)
         ])
     }
 }
