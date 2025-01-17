@@ -18,15 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let window = UIWindow(windowScene: windowScene)
-        let viewController: UIViewController
-        if let url = URL(string: "https://github.com/Alamofire/Alamofire/tree/master") {
-            viewController = WKWebViewController(urlRequest: URLRequest(url: url))
-        } else {
-            viewController = UIViewController()
-            let feedbackView = FeedbackView()
-            feedbackView.addFeedback(to: viewController.view, type: .error("Impossível carregar url!"))
-        }
-        window.rootViewController = viewController
+        window.rootViewController = UINavigationController(rootViewController: TableViewController())
         
         self.window = window
         window.makeKeyAndVisible()
