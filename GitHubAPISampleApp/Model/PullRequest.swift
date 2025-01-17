@@ -8,15 +8,29 @@
 import Foundation
 
 struct PullRequest: Codable {
-    let url: URL
+    let htmlUrl: URL
     let title: String
     let user: User
-    let body: String
+    let body: String?
     let createdAt: String
-    let state: PullRequestState?
+    let mergedAt: String?
+    let state: String?
+    let draft: Bool
+    
+    var completeState: PullRequestState {
+        if mergedAt != nil {
+            return .merged
+        } else if draft {
+            return .draft
+        }
+        return PullRequestState(rawValue: state ?? "") ?? .unowned
+    }
 }
 
-enum PullRequestState: String, Codable {
+enum PullRequestState: String {
     case open
     case closed
+    case merged
+    case draft
+    case unowned
 }

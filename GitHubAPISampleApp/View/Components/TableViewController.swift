@@ -35,6 +35,7 @@ class TableViewController<V: TableViewModelProtocol>: UITableViewController, Tab
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.separatorStyle = .none
+        tableView.backgroundColor = .systemGroupedBackground
         tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
     }
 

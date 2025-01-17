@@ -17,12 +17,14 @@ final class TableViewCell: UITableViewCell {
     }
     
     func setup(_ view: UIView, convertViewInCard: Bool = true,
-               padding: UIEdgeInsets = .init(top: .smallSpacing, left: .smallSpacing, bottom: .smallSpacing, right: .smallSpacing)) {
+               padding: UIEdgeInsets = .init(top: .smallSpacing, left: .mediumSpacing, bottom: .smallSpacing, right: .mediumSpacing)) {
         selectionStyle = .none
         
         if convertViewInCard {
-            view.backgroundColor = .systemBackground
-            view.layer.cornerRadius = 8
+            backgroundColor = .clear
+            
+            view.backgroundColor = .secondarySystemBackground
+            view.layer.cornerRadius = .defaultCornerRadius
             view.clipsToBounds = true
             
             let shadowView = createShadowView()
@@ -35,10 +37,12 @@ final class TableViewCell: UITableViewCell {
     
     private func createShadowView() -> UIView {
         let shadowView = UIView()
-        shadowView.layer.borderWidth = 0.5
-        shadowView.layer.borderColor = UIColor.systemGray4.cgColor
+        shadowView.layer.cornerRadius = .defaultCornerRadius
         
-        shadowView.layer.shadowColor = UIColor.black.cgColor
+        shadowView.layer.borderWidth = 0.5
+        shadowView.layer.borderColor = UIColor.systemGray3.cgColor
+        
+        shadowView.layer.shadowColor = UIColor.gray.cgColor
         shadowView.layer.shadowOpacity = 0.3
         shadowView.layer.shadowRadius = 3.0
         shadowView.layer.shadowOffset = CGSize(width: 2.0, height: 2.0)

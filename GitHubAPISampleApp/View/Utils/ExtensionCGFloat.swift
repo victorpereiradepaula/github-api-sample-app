@@ -1,5 +1,5 @@
 //
-//  DefaultSpacing.swift
+//  ExtensionCGFloat.swift
 //  GitHubAPISampleApp
 //
 //  Created by Victor Pereira de Paula on 17/01/25.
@@ -16,4 +16,6 @@ extension CGFloat {
     
     /// 24px
     static let largeSpacing: CGFloat = 24
+    
+    static let defaultCornerRadius: CGFloat = 4
 }

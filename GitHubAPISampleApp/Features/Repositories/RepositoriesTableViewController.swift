@@ -22,9 +22,10 @@ final class RepositoriesTableViewController: TableViewController<RepositoriesVie
     }
     
     func goToRullRequests(_ repositoryFullName: String) {
-        let viewController = UIViewController()
-        viewController.title = repositoryFullName
-        viewController.view.backgroundColor = .purple
+        let viewModel = PullRequestsViewModel(repositoryFullName)
+        let viewController = PullRequestsTableViewController(viewModel: viewModel)
+        viewModel.delegate = viewController
+        
         navigationController?.pushViewController(viewController, animated: true)
     }
 }

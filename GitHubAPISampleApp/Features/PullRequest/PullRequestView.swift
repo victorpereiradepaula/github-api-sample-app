@@ -15,16 +15,24 @@ final class PullRequestView: UIView {
         return label
     }()
     
-    private lazy var descriptionView = DescriptionView(title: title, description: descriptionText)
+    private lazy var descriptionView = DescriptionView(title: title, description: descriptionText, descriptionNumberOfLines: 5)
     
     private lazy var avatarView = AvatarView(name: authorName, avatarURL: authorAvatarURL)
     
     private lazy var stateView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        if let state {
-            view.backgroundColor = state == .closed ? .red : .systemGreen
-        } else {
+        
+        switch state {
+        case .open:
+            view.backgroundColor = .systemGreen
+        case .closed:
+            view.backgroundColor = .red
+        case .merged:
+            view.backgroundColor = .purple
+        case .draft:
+            view.backgroundColor = .darkGray
+        case .unowned:
             view.backgroundColor = .yellow
         }
         return view
@@ -49,12 +57,17 @@ final class PullRequestView: UIView {
     }()
     
     private let title: String
-    private let descriptionText: String
+    private let descriptionText: String?
     private let authorName: String
     private let authorAvatarURL: URL?
-    private let state: PullRequestState?
+    private let state: PullRequestState
     
-    init(title: String, description: String, date: String, authorName: String, authorAvatarURL: URL?, state: PullRequestState?) {
+    convenience init(_ pullRequest: PullRequest) {
+        let author = pullRequest.user
+        self.init(title: pullRequest.title, description: pullRequest.body, date: pullRequest.createdAt, authorName: author.name ?? author.login, authorAvatarURL: author.avatarUrl, state: pullRequest.completeState)
+    }
+    
+    init(title: String, description: String?, date: String, authorName: String, authorAvatarURL: URL?, state: PullRequestState) {
         self.title = title
         self.descriptionText = description
         self.authorName = authorName

@@ -5,7 +5,7 @@
 //  Created by Victor Pereira de Paula on 16/01/25.
 //
 
-import Alamofire
+import UIKit
 
 final class RepositoriesViewModel: TableViewModelProtocol {
     typealias T = Repository
@@ -25,7 +25,7 @@ final class RepositoriesViewModel: TableViewModelProtocol {
         fetchRepositories()
     }
     
-    var repositoriesPath: String {
+    var stringUrl: String {
         "https://api.github.com/search/repositories?q=language:Swift&sort=stars&per_page=10&page=\(currentPage)"
     }
     
@@ -38,18 +38,12 @@ final class RepositoriesViewModel: TableViewModelProtocol {
     }
     
     func fetchRepositories() {
-        let jsonDecoder = JSONDecoder()
-        jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
-        AF.request(repositoriesPath).responseDecodable(of: Repositories.self, decoder: jsonDecoder) { [weak self] response in
-            switch response.result {
+        Network.request(type: Repositories.self, stringUrl: stringUrl) { [weak self] result in
+            switch result {
             case .success(let repositories):
                 self?.items = repositories.items
             case .failure(let error):
-                if let data = response.data, let apiError = try? jsonDecoder.decode(APIError.self, from: data) {
-                    debugPrint(apiError)
-                } else {
-                    debugPrint(error)
-                }
+                print(error)
             }
         }
     }

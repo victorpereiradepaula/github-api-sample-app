@@ -12,13 +12,13 @@ final class DescriptionView: UIView {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .headline)
+        label.numberOfLines = 2
         return label
     }()
     
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .body)
-        label.numberOfLines = 0
         return label
     }()
     
@@ -29,10 +29,11 @@ final class DescriptionView: UIView {
         return stackView
     }()
     
-    init(title: String, description: String) {
+    init(title: String, description: String?, descriptionNumberOfLines: Int = 0) {
         super.init(frame: .zero)
         titleLabel.text = title
         descriptionLabel.text = description
+        descriptionLabel.numberOfLines = descriptionNumberOfLines
         setupView()
     }
     
