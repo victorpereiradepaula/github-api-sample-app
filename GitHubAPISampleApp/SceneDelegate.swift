@@ -18,7 +18,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = UINavigationController(rootViewController: TableViewController())
+        
+        let viewModel = RepositoriesViewModel()
+        let viewController = RepositoriesTableViewController(viewModel: viewModel)
+        viewModel.delegate = viewController
+        
+        window.rootViewController = UINavigationController(rootViewController: viewController)
         
         self.window = window
         window.makeKeyAndVisible()

@@ -41,6 +41,13 @@ final class RepositoryView: UIView {
     private let forksCount: String
     private let starsCount: String
     
+    convenience init(_ repository: Repository) {
+        let user = repository.owner
+        self.init(userName: user.name ?? user.login, avatarURL: user.avatarUrl,
+                  repoName: repository.name, repoDescription: repository.description,
+                  forksCount: "\(repository.forksCount)", starsCount: "\(repository.stargazersCount)")
+    }
+    
     init(userName: String, avatarURL: URL?, repoName: String, repoDescription: String, forksCount: String, starsCount: String) {
         self.userName = userName
         self.avatarURL = avatarURL
