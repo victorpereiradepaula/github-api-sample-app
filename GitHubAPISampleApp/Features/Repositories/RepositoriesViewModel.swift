@@ -13,7 +13,14 @@ final class RepositoriesViewModel: TableViewModelProtocol {
     weak var delegate: RepositoriesTableViewDelegate?
     
     var title = "Repositórios Swift"
+    var isLoading = true
     var currentPage = 1
+    var totalItens: Int = 0
+    
+    var lastPage: Int {
+        let roundedPages = ceil(Double(totalItens) / Double(itensPerPage))
+        return Int(roundedPages)
+    }
     
     var items: [Repository] = [] {
         didSet {
@@ -26,7 +33,7 @@ final class RepositoriesViewModel: TableViewModelProtocol {
     }
     
     var stringUrl: String {
-        "https://api.github.com/search/repositories?q=language:Swift&sort=stars&per_page=10&page=\(currentPage)"
+        "https://api.github.com/search/repositories?q=language:Swift&sort=stars&per_page=\(itensPerPage)&page=\(currentPage)"
     }
     
     var numberOfItems: Int {
@@ -37,11 +44,24 @@ final class RepositoriesViewModel: TableViewModelProtocol {
         delegate?.goToRullRequests(items[indexPath.row].fullName)
     }
     
+    func canGetNextPage(_ willDisplayRow: Int) -> Bool {
+        !isLoading && willDisplayRow == items.count - 1 && currentPage < lastPage
+    }
+    
+    func getNextPageIfNeeded(at indexPath: IndexPath) {
+        guard canGetNextPage(indexPath.row) else { return }
+        currentPage += 1
+        fetchRepositories()
+    }
+    
     func fetchRepositories() {
+        self.isLoading = true
         Network.request(type: Repositories.self, stringUrl: stringUrl) { [weak self] result in
+            self?.isLoading = false
             switch result {
             case .success(let repositories):
-                self?.items = repositories.items
+                self?.totalItens = repositories.totalCount
+                self?.items.append(contentsOf: repositories.items)
             case .failure(let error):
                 print(error)
             }

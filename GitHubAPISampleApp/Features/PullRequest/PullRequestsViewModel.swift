@@ -13,6 +13,8 @@ final class PullRequestsViewModel: TableViewModelProtocol {
     weak var delegate: PullRequestsTableViewDelegate?
     
     let repositoryFullName: String
+    var isLoading = true
+    var isLastPage = false
     var currentPage = 1
     var items: [PullRequest] = [] {
         didSet {
@@ -26,7 +28,7 @@ final class PullRequestsViewModel: TableViewModelProtocol {
     }
     
     var stringUrl: String {
-        "https://api.github.com/repos/\(repositoryFullName)/pulls?state=all&per_page=10&page=\(currentPage)"
+        "https://api.github.com/repos/\(repositoryFullName)/pulls?state=all&per_page=\(itensPerPage)&page=\(currentPage)"
     }
     
     var title: String {
@@ -37,11 +39,28 @@ final class PullRequestsViewModel: TableViewModelProtocol {
         items.count
     }
     
+    func canGetNextPage(_ willDisplayRow: Int) -> Bool {
+        !isLoading && willDisplayRow == items.count - 1 && !isLastPage
+    }
+    
+    func getNextPageIfNeeded(at indexPath: IndexPath) {
+        print(canGetNextPage(indexPath.row))
+        guard canGetNextPage(indexPath.row) else { return }
+        currentPage += 1
+        fetchPullRequests()
+    }
+    
     func fetchPullRequests() {
+        self.isLoading = true
         Network.request(type: [PullRequest].self, stringUrl: stringUrl) { [weak self] result in
+            self?.isLoading = false
             switch result {
             case .success(let pullRequests):
-                self?.items = pullRequests
+                if pullRequests.isEmpty {
+                    self?.isLastPage = true
+                } else {
+                    self?.items.append(contentsOf: pullRequests)
+                }
             case .failure(let error):
                 print(error)
             }

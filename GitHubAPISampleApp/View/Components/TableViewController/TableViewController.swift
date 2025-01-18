@@ -7,18 +7,6 @@
 
 import UIKit
 
-protocol TableViewDelegate: AnyObject {
-    func reloadData()
-}
-
-protocol TableViewModelProtocol: AnyObject {
-    associatedtype T: Codable
-    var title: String { get }
-    var numberOfItems: Int { get }
-    var items: [T] { get }
-    func didSelectItem(at indexPath: IndexPath)
-}
-
 class TableViewController<V: TableViewModelProtocol>: UITableViewController, TableViewDelegate {
     let viewModel: V
     
@@ -37,6 +25,10 @@ class TableViewController<V: TableViewModelProtocol>: UITableViewController, Tab
         tableView.separatorStyle = .none
         tableView.backgroundColor = .systemGroupedBackground
         tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
+    }
+    
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        viewModel.getNextPageIfNeeded(at: indexPath)
     }
 
     // MARK: UITableViewDataSource
