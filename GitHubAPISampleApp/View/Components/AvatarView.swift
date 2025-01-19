@@ -41,7 +41,8 @@ final class AvatarView: UIView {
         super.init(frame: .zero)
         
         nameLabel.text = name
-        imageView.kf.setImage(with: avatarURL)
+        imageView.kf.setImage(with: avatarURL,
+                              placeholder: UIImage(systemName: "person.circle.fill"))
         setupView()
     }
     

@@ -7,6 +7,8 @@
 
 import UIKit
 
+
+/// Use as a base class when creating a paginated tableView
 class PaginatedTableViewController<V: PaginatedTableViewModelProtocol>: UIViewController, UITableViewDelegate, UITableViewDataSource, PaginatedTableViewDelegate {
     
     private lazy var tableView: UITableView = {
