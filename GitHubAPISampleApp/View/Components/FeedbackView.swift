@@ -9,8 +9,7 @@ import UIKit
 
 enum FeedbackType {
     case loading
-    case error(_ message: String)
-    case empty(_ message: String)
+    case message(_ message: String, systemImageName: String, imageColor: UIColor)
 }
 
 final class FeedbackView: UIView {
@@ -26,10 +25,8 @@ final class FeedbackView: UIView {
         switch type {
         case .loading:
             setupLoading()
-        case .error(let message):
-            setupFeedbackWithMessage(message, systemImageName: "exclamationmark.circle", imageColor: .systemRed)
-        case .empty(let message):
-            setupFeedbackWithMessage(message, systemImageName: "text.page.slash", imageColor: .gray)
+        case .message(let message, let systemImageName, let imageColor):
+            setupFeedbackWithMessage(message, systemImageName: systemImageName, imageColor: imageColor)
         }
         
         view.addSubViewWithAllSideConstraints(self, isSafeAreaLayoutGuide: true)

@@ -17,7 +17,7 @@ final class RepositoriesViewModel: TableViewModelProtocol {
     
     var title = "Repositórios Swift"
     var emptyFeedbackMessage: String = "Nenhum repositório encontrado."
-    var isLoading = true {
+    var state: ListState = .loading {
         didSet {
             showFeedbackIfNeeded()
         }
@@ -65,7 +65,7 @@ final class RepositoriesViewModel: TableViewModelProtocol {
     }
     
     func canGetNextPage(_ willDisplayRow: Int) -> Bool {
-        !isLoading && willDisplayRow == items.count - 1 && currentPage < lastPage
+        state != .loading && willDisplayRow == items.count - 1 && currentPage < lastPage
     }
     
     func getNextPageIfNeeded(at indexPath: IndexPath) {
@@ -75,15 +75,16 @@ final class RepositoriesViewModel: TableViewModelProtocol {
     }
     
     func fetchRepositories() {
-        self.isLoading = true
+        state = .loading
         service.request(type: Repositories.self, stringUrl: stringUrl) { [weak self] result in
+            guard let self else { return }
             switch result {
             case .success(let repositories):
-                self?.totalItens = repositories.totalCount
-                self?.items.append(contentsOf: repositories.items)
-                self?.isLoading = false
+                self.totalItens = repositories.totalCount
+                self.items.append(contentsOf: repositories.items)
+                self.state = self.getStateAfterResponse()
             case .failure(let error):
-                self?.showFeedback(.error(error.localizedDescription))
+                self.state = .error(message: error.localizedDescription)
             }
         }
     }

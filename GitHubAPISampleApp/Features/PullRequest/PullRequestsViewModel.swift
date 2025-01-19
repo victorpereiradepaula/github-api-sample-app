@@ -16,7 +16,7 @@ final class PullRequestsViewModel: TableViewModelProtocol {
     private let service: NetworkService
     
     var emptyFeedbackMessage: String = "Nenhum pull request encontrado."
-    var isLoading = true {
+    var state: ListState = .loading {
         didSet {
             showFeedbackIfNeeded()
         }
@@ -60,7 +60,7 @@ final class PullRequestsViewModel: TableViewModelProtocol {
     }
     
     func canGetNextPage(_ willDisplayRow: Int) -> Bool {
-        !isLoading && willDisplayRow == items.count - 1 && !isLastPage
+        state != .loading && willDisplayRow == items.count - 1 && !isLastPage
     }
     
     func getNextPageIfNeeded(at indexPath: IndexPath) {
@@ -70,18 +70,19 @@ final class PullRequestsViewModel: TableViewModelProtocol {
     }
     
     func fetchPullRequests() {
-        self.isLoading = true
+        state = .loading
         service.request(type: [PullRequest].self, stringUrl: stringUrl) { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .success(let pullRequests):
                 if pullRequests.isEmpty {
-                    self?.isLastPage = true
+                    self.isLastPage = true
                 } else {
-                    self?.items.append(contentsOf: pullRequests)
+                    self.items.append(contentsOf: pullRequests)
                 }
-                self?.isLoading = false
+                self.state = getStateAfterResponse()
             case .failure(let error):
-                self?.showFeedback(.error(error.localizedDescription))
+                self.state = .error(message: error.localizedDescription)
             }
         }
     }
