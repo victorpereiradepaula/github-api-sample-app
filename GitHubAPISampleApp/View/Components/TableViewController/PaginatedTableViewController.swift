@@ -1,5 +1,5 @@
 //
-//  TableViewController.swift
+//  PaginatedTableViewController.swift
 //  GitHubAPISampleApp
 //
 //  Created by Victor Pereira de Paula on 16/01/25.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TableViewController<V: TableViewModelProtocol>: UIViewController, UITableViewDelegate, UITableViewDataSource, TableViewDelegate {
+class PaginatedTableViewController<V: PaginatedTableViewModelProtocol>: UIViewController, UITableViewDelegate, UITableViewDataSource, PaginatedTableViewDelegate {
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -62,13 +62,12 @@ class TableViewController<V: TableViewModelProtocol>: UIViewController, UITableV
         #endif
     }
     
-    // MARK: TableViewDelegate
+    // MARK: PaginatedTableViewDelegate
     func reloadData() {
         tableView.reloadData()
     }
     
     func showFeedback(_ type: FeedbackType) {
-        removeFeedback()
         let feedbackView = FeedbackView()
         feedbackView.addFeedback(to: view, type: type)
         self.feedbackView = feedbackView

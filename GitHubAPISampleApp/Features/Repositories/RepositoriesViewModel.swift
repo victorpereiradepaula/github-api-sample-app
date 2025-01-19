@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class RepositoriesViewModel: TableViewModelProtocol {
+final class RepositoriesViewModel: PaginatedTableViewModelProtocol {
     typealias T = Repository
     typealias V = RepositoriesTableViewDelegate
     
@@ -15,13 +15,11 @@ final class RepositoriesViewModel: TableViewModelProtocol {
     
     private let service: NetworkService
     
-    var title = "Repositórios Swift"
-    var emptyFeedbackMessage: String = "Nenhum repositório encontrado."
-    var state: ListState = .loading {
-        didSet {
-            showFeedbackIfNeeded()
-        }
-    }
+    let title = "Repositórios Swift"
+    let path = "search/repositories?q=language:Swift&sort=stars"
+    let emptyFeedbackMessage = "Nenhum repositório encontrado."
+    
+    var state: ListState = .loading
     var currentPage = 1
     var totalItens: Int = 0
     
@@ -40,16 +38,8 @@ final class RepositoriesViewModel: TableViewModelProtocol {
         self.service = service
     }
     
-    var stringUrl: String {
-        "https://api.github.com/search/repositories?q=language:Swift&sort=stars&per_page=\(itensPerPage)&page=\(currentPage)"
-    }
-    
-    var numberOfItems: Int {
-        items.count
-    }
-    
     func viewDidLoad() {
-        fetchRepositories()
+        fetchData()
     }
     
     func showFeedback(_ type: FeedbackType) {
@@ -68,24 +58,20 @@ final class RepositoriesViewModel: TableViewModelProtocol {
         state != .loading && willDisplayRow == items.count - 1 && currentPage < lastPage
     }
     
-    func getNextPageIfNeeded(at indexPath: IndexPath) {
-        guard canGetNextPage(indexPath.row) else { return }
-        currentPage += 1
-        fetchRepositories()
-    }
-    
-    func fetchRepositories() {
-        state = .loading
+    func fetchData() {
+        setStateBeforeRequest()
+        let stringUrl = UrlManager.createUrl(path, itensPerPage: itensPerPage, currentPage: currentPage)
         service.request(type: Repositories.self, stringUrl: stringUrl) { [weak self] result in
             guard let self else { return }
+            var error: APIError?
             switch result {
             case .success(let repositories):
                 self.totalItens = repositories.totalCount
                 self.items.append(contentsOf: repositories.items)
-                self.state = self.getStateAfterResponse()
-            case .failure(let error):
-                self.state = .error(message: error.localizedDescription)
+            case .failure(let apiError):
+                error = apiError
             }
+            self.setStateAfterRequest(error)
         }
     }
 }

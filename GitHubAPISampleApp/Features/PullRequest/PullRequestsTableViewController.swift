@@ -7,11 +7,11 @@
 
 import UIKit
 
-protocol PullRequestsTableViewDelegate: TableViewDelegate {
+protocol PullRequestsTableViewDelegate: PaginatedTableViewDelegate {
     func gotToPullRequestDetail(_ url: URL)
 }
 
-final class PullRequestsTableViewController: TableViewController<PullRequestsViewModel>, PullRequestsTableViewDelegate {
+final class PullRequestsTableViewController: PaginatedTableViewController<PullRequestsViewModel>, PullRequestsTableViewDelegate {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let tableViewCell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier, for: indexPath) as? TableViewCell else {

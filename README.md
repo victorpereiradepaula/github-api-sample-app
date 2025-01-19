@@ -11,8 +11,10 @@ Um projeto exemplo feito utilizando APIs do GitHub, UIKit (ViewCode), com arquit
 
 1. [Setup do projeto](#setup-do-projeto)
 1. [Funcionalidades](#funcionalidades)
-1. [Arquitetura](#arquitetura)
+1. [Projeto](#projeto)
+    - [Arquitetura](#arquitetura)
     - [Organização das pastas projeto](#organização-das-pastas-projeto)
+    - [Informações úteis](#informações-úteis)
 1. [Dependências](#dependências)
 1. [Exemplos](#exemplos)
 1. [Referências](#referências)
@@ -40,7 +42,9 @@ open GitHubAPISampleApp.xcworkspace
 - [ ] Testes de snapshot dos componentes
 - [ ] Acessibilidade dos componentes (VoiceOver)
 
-## Arquitetura
+## Projeto
+
+### Arquitetura
 
 O projeto é implementado em **MVVM** (Model-View-ViewModel),arquitetura que permite a divisão das responsabilidades da seguinte forma:
 
@@ -56,7 +60,20 @@ O projeto é implementado em **MVVM** (Model-View-ViewModel),arquitetura que per
 
 **Model** - pasta que contém os modelos de dados utilizados no projeto, estes não ficam dentro das pastas das features por algumas vezes serem reutilizados por outros modelos ou funcionalidades.
 
+**Network** - pasta que contém estruturas relacionadas à camada de rede do projeto.
+
 **View** - pasta que possui as subpastas **Components** que possui componentes visuais da aplicação e **Utils** que possui extensions e outros blocos de código reaproveitáveis dentro do escopo de view.
+
+### Informações úteis
+
+#### FeedbackView
+
+Para utilização da FeedbackView crie uma variável opcional para manter a referência da view
+
+```swift
+
+```
+
 
 ## Dependências
 

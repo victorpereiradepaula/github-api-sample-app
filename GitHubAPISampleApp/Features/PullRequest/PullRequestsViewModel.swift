@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class PullRequestsViewModel: TableViewModelProtocol {
+final class PullRequestsViewModel: PaginatedTableViewModelProtocol {
     typealias T = PullRequest
     
     weak var delegate: PullRequestsTableViewDelegate?
@@ -15,12 +15,8 @@ final class PullRequestsViewModel: TableViewModelProtocol {
     private let repositoryFullName: String
     private let service: NetworkService
     
-    var emptyFeedbackMessage: String = "Nenhum pull request encontrado."
-    var state: ListState = .loading {
-        didSet {
-            showFeedbackIfNeeded()
-        }
-    }
+    let emptyFeedbackMessage = "Nenhum pull request encontrado."
+    var state: ListState = .loading
     var isLastPage = false
     var currentPage = 1
     var items: [T] = [] {
@@ -32,23 +28,18 @@ final class PullRequestsViewModel: TableViewModelProtocol {
     init(_ repositoryFullName: String, service: NetworkService = NetworkService()) {
         self.repositoryFullName = repositoryFullName
         self.service = service
-        fetchPullRequests()
     }
     
-    var stringUrl: String {
-        "https://api.github.com/repos/\(repositoryFullName)/pulls?state=all&per_page=\(itensPerPage)&page=\(currentPage)"
+    var path: String {
+        "repos/\(repositoryFullName)/pulls?state=all"
     }
     
     var title: String {
         repositoryFullName
     }
     
-    var numberOfItems: Int {
-        items.count
-    }
-    
     func viewDidLoad() {
-        fetchPullRequests()
+        fetchData()
     }
     
     func showFeedback(_ type: FeedbackType) {
@@ -63,16 +54,12 @@ final class PullRequestsViewModel: TableViewModelProtocol {
         state != .loading && willDisplayRow == items.count - 1 && !isLastPage
     }
     
-    func getNextPageIfNeeded(at indexPath: IndexPath) {
-        guard canGetNextPage(indexPath.row) else { return }
-        currentPage += 1
-        fetchPullRequests()
-    }
-    
-    func fetchPullRequests() {
-        state = .loading
+    func fetchData() {
+        setStateBeforeRequest()
+        let stringUrl = UrlManager.createUrl(path, itensPerPage: itensPerPage, currentPage: currentPage)
         service.request(type: [PullRequest].self, stringUrl: stringUrl) { [weak self] result in
             guard let self = self else { return }
+            var error: APIError?
             switch result {
             case .success(let pullRequests):
                 if pullRequests.isEmpty {
@@ -80,10 +67,10 @@ final class PullRequestsViewModel: TableViewModelProtocol {
                 } else {
                     self.items.append(contentsOf: pullRequests)
                 }
-                self.state = getStateAfterResponse()
-            case .failure(let error):
-                self.state = .error(message: error.localizedDescription)
+            case .failure(let apiError):
+                error = apiError
             }
+            setStateAfterRequest(error)
         }
     }
     

@@ -7,11 +7,11 @@
 
 import UIKit
 
-protocol RepositoriesTableViewDelegate: TableViewDelegate {
+protocol RepositoriesTableViewDelegate: PaginatedTableViewDelegate {
     func goToRullRequests(_ repositoryFullName: String)
 }
 
-final class RepositoriesTableViewController: TableViewController<RepositoriesViewModel>, RepositoriesTableViewDelegate {
+final class RepositoriesTableViewController: PaginatedTableViewController<RepositoriesViewModel>, RepositoriesTableViewDelegate {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let tableViewCell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier, for: indexPath) as? TableViewCell else {

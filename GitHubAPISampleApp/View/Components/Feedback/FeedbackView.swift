@@ -9,10 +9,12 @@ import UIKit
 
 enum FeedbackType {
     case loading
-    case message(_ message: String, systemImageName: String, imageColor: UIColor)
+    case message(_ message: String, systemImageName: String, imageColor: UIColor, action: FeedbackAction? = nil)
 }
 
 final class FeedbackView: UIView {
+    
+    private var feedbackAction: FeedbackAction?
     
     init() {
         super.init(frame: .zero)
@@ -22,11 +24,14 @@ final class FeedbackView: UIView {
     required init?(coder: NSCoder) { nil }
     
     func addFeedback(to view: UIView, type: FeedbackType) {
+        // Garantir que só haverá um FeedbackView por view
+        view.subviews.forEach { if $0 is FeedbackView { $0.removeFromSuperview() } }
+        
         switch type {
         case .loading:
             setupLoading()
-        case .message(let message, let systemImageName, let imageColor):
-            setupFeedbackWithMessage(message, systemImageName: systemImageName, imageColor: imageColor)
+        case .message(let message, let systemImageName, let imageColor, let action):
+            setupFeedbackWithMessage(message, systemImageName: systemImageName, imageColor: imageColor, action: action)
         }
         
         view.addSubViewWithAllSideConstraints(self, isSafeAreaLayoutGuide: true)
@@ -48,7 +53,7 @@ final class FeedbackView: UIView {
         activityIndicator.startAnimating()
     }
     
-    private func setupFeedbackWithMessage(_ message: String, systemImageName: String, imageColor: UIColor) {
+    private func setupFeedbackWithMessage(_ message: String, systemImageName: String, imageColor: UIColor, action: FeedbackAction?) {
         backgroundColor = .systemBackground
         
         let imageView = UIImageView(image: .init(systemName: systemImageName))
@@ -57,12 +62,25 @@ final class FeedbackView: UIView {
         addSubview(imageView)
 
         let messageLabel = UILabel()
-        messageLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.numberOfLines = 0
         messageLabel.textAlignment = .center
         messageLabel.text = message
         messageLabel.textColor = .label
-        addSubview(messageLabel)
+        
+        let stackView = UIStackView(arrangedSubviews: [messageLabel])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.spacing = 48
+        addSubview(stackView)
+        
+        if let action {
+            self.feedbackAction = action
+            let button = UIButton(type: .system)
+            button.setTitle(action.title, for: .normal)
+            button.addTarget(self, action: #selector(didTapActionButton), for: .touchUpInside)
+            
+            stackView.addArrangedSubview(button)
+        }
         
         NSLayoutConstraint.activate([
             imageView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -48),
@@ -70,10 +88,14 @@ final class FeedbackView: UIView {
             imageView.widthAnchor.constraint(equalToConstant: 48),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
             
-            messageLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16),
-            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            messageLabel.bottomAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.bottomAnchor)
+            stackView.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.bottomAnchor)
         ])
+    }
+    
+    @objc private func didTapActionButton() {
+        feedbackAction?.action()
     }
 }
