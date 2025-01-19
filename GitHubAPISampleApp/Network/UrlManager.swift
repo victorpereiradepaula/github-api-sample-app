@@ -9,13 +9,13 @@ enum UrlManager {
     static let baseUrl = "https://api.github.com/"
     
     static func createUrl(_ path: String, itensPerPage: Int? = nil, currentPage: Int? = nil) -> String {
-        let url = UrlManager.baseUrl + path
-        if let itensPerPage = itensPerPage {
-            return url + "&per_page=\(itensPerPage)"
+        var url = UrlManager.baseUrl + path
+        if let itensPerPage {
+            url += "&per_page=\(itensPerPage)"
         }
         
-        if let currentPage = currentPage {
-            return url + "&page=\(currentPage)"
+        if let currentPage {
+            url += "&page=\(currentPage)"
         }
 
         return url
