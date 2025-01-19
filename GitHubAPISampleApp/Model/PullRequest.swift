@@ -18,12 +18,20 @@ struct PullRequest: Codable {
     let draft: Bool
     
     var completeState: PullRequestState {
-        if mergedAt != nil {
-            return .merged
-        } else if draft {
-            return .draft
+        var currentState = PullRequestState(rawValue: state ?? "") ?? .unowned
+        switch currentState {
+        case .open:
+            if draft {
+                currentState = .draft
+            }
+        case .closed:
+            if mergedAt != nil {
+                currentState = .merged
+            }
+        default:
+            break
         }
-        return PullRequestState(rawValue: state ?? "") ?? .unowned
+        return currentState
     }
 }
 
