@@ -7,11 +7,13 @@
 
 import UIKit
 
+enum FeedbackType {
+    case loading
+    case error(_ message: String)
+    case empty(_ message: String)
+}
+
 final class FeedbackView: UIView {
-    enum FeedbackType {
-        case loading
-        case error(_ message: String)
-    }
     
     init() {
         super.init(frame: .zero)
@@ -21,23 +23,16 @@ final class FeedbackView: UIView {
     required init?(coder: NSCoder) { nil }
     
     func addFeedback(to view: UIView, type: FeedbackType) {
-        subviews.forEach { $0.removeFromSuperview() }
-        
         switch type {
         case .loading:
             setupLoading()
         case .error(let message):
-            setupError(message)
+            setupFeedbackWithMessage(message, systemImageName: "exclamationmark.circle", imageColor: .systemRed)
+        case .empty(let message):
+            setupFeedbackWithMessage(message, systemImageName: "text.page.slash", imageColor: .gray)
         }
         
-        translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(self)
-        NSLayoutConstraint.activate([
-            topAnchor.constraint(equalTo: view.topAnchor),
-            leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        view.addSubViewWithAllSideConstraints(self, isSafeAreaLayoutGuide: true)
     }
     
     private func setupLoading() {
@@ -56,31 +51,32 @@ final class FeedbackView: UIView {
         activityIndicator.startAnimating()
     }
     
-    private func setupError(_ message: String) {
-        backgroundColor = .white
+    private func setupFeedbackWithMessage(_ message: String, systemImageName: String, imageColor: UIColor) {
+        backgroundColor = .systemBackground
         
-        let errorImageView = UIImageView(image: .init(systemName: "exclamationmark.circle"))
-        errorImageView.translatesAutoresizingMaskIntoConstraints = false
-        errorImageView.tintColor = .systemRed
-        addSubview(errorImageView)
+        let imageView = UIImageView(image: .init(systemName: systemImageName))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.tintColor = imageColor
+        addSubview(imageView)
 
         let messageLabel = UILabel()
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.numberOfLines = 0
         messageLabel.textAlignment = .center
         messageLabel.text = message
+        messageLabel.textColor = .label
         addSubview(messageLabel)
         
         NSLayoutConstraint.activate([
-            errorImageView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -48),
-            errorImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            errorImageView.widthAnchor.constraint(equalToConstant: 48),
-            errorImageView.heightAnchor.constraint(equalTo: errorImageView.widthAnchor),
+            imageView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -48),
+            imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            imageView.widthAnchor.constraint(equalToConstant: 48),
+            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
             
-            messageLabel.topAnchor.constraint(equalTo: errorImageView.bottomAnchor, constant: 8),
+            messageLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 16),
             messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            messageLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -24)
+            messageLabel.bottomAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 }

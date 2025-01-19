@@ -9,11 +9,19 @@ import UIKit
 
 final class RepositoriesViewModel: TableViewModelProtocol {
     typealias T = Repository
+    typealias V = RepositoriesTableViewDelegate
     
-    weak var delegate: RepositoriesTableViewDelegate?
+    weak var delegate: V?
+    
+    private let service: NetworkService
     
     var title = "Repositórios Swift"
-    var isLoading = true
+    var emptyFeedbackMessage: String = "Nenhum repositório encontrado."
+    var isLoading = true {
+        didSet {
+            showFeedbackIfNeeded()
+        }
+    }
     var currentPage = 1
     var totalItens: Int = 0
     
@@ -28,8 +36,8 @@ final class RepositoriesViewModel: TableViewModelProtocol {
         }
     }
     
-    init() {
-        fetchRepositories()
+    init(service: NetworkService = NetworkService()) {
+        self.service = service
     }
     
     var stringUrl: String {
@@ -38,6 +46,18 @@ final class RepositoriesViewModel: TableViewModelProtocol {
     
     var numberOfItems: Int {
         items.count
+    }
+    
+    func viewDidLoad() {
+        fetchRepositories()
+    }
+    
+    func showFeedback(_ type: FeedbackType) {
+        delegate?.showFeedback(type)
+    }
+    
+    func removeFeedback() {
+        delegate?.removeFeedback()
     }
     
     func didSelectItem(at indexPath: IndexPath) {
@@ -56,14 +76,14 @@ final class RepositoriesViewModel: TableViewModelProtocol {
     
     func fetchRepositories() {
         self.isLoading = true
-        Network.request(type: Repositories.self, stringUrl: stringUrl) { [weak self] result in
-            self?.isLoading = false
+        service.request(type: Repositories.self, stringUrl: stringUrl) { [weak self] result in
             switch result {
             case .success(let repositories):
                 self?.totalItens = repositories.totalCount
                 self?.items.append(contentsOf: repositories.items)
+                self?.isLoading = false
             case .failure(let error):
-                print(error)
+                self?.showFeedback(.error(error.localizedDescription))
             }
         }
     }

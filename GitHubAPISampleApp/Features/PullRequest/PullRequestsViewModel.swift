@@ -12,18 +12,26 @@ final class PullRequestsViewModel: TableViewModelProtocol {
     
     weak var delegate: PullRequestsTableViewDelegate?
     
-    let repositoryFullName: String
-    var isLoading = true
+    private let repositoryFullName: String
+    private let service: NetworkService
+    
+    var emptyFeedbackMessage: String = "Nenhum pull request encontrado."
+    var isLoading = true {
+        didSet {
+            showFeedbackIfNeeded()
+        }
+    }
     var isLastPage = false
     var currentPage = 1
-    var items: [PullRequest] = [] {
+    var items: [T] = [] {
         didSet {
             delegate?.reloadData()
         }
     }
     
-    init(_ repositoryFullName: String) {
+    init(_ repositoryFullName: String, service: NetworkService = NetworkService()) {
         self.repositoryFullName = repositoryFullName
+        self.service = service
         fetchPullRequests()
     }
     
@@ -39,12 +47,23 @@ final class PullRequestsViewModel: TableViewModelProtocol {
         items.count
     }
     
+    func viewDidLoad() {
+        fetchPullRequests()
+    }
+    
+    func showFeedback(_ type: FeedbackType) {
+        delegate?.showFeedback(type)
+    }
+    
+    func removeFeedback() {
+        delegate?.removeFeedback()
+    }
+    
     func canGetNextPage(_ willDisplayRow: Int) -> Bool {
         !isLoading && willDisplayRow == items.count - 1 && !isLastPage
     }
     
     func getNextPageIfNeeded(at indexPath: IndexPath) {
-        print(canGetNextPage(indexPath.row))
         guard canGetNextPage(indexPath.row) else { return }
         currentPage += 1
         fetchPullRequests()
@@ -52,8 +71,7 @@ final class PullRequestsViewModel: TableViewModelProtocol {
     
     func fetchPullRequests() {
         self.isLoading = true
-        Network.request(type: [PullRequest].self, stringUrl: stringUrl) { [weak self] result in
-            self?.isLoading = false
+        service.request(type: [PullRequest].self, stringUrl: stringUrl) { [weak self] result in
             switch result {
             case .success(let pullRequests):
                 if pullRequests.isEmpty {
@@ -61,8 +79,9 @@ final class PullRequestsViewModel: TableViewModelProtocol {
                 } else {
                     self?.items.append(contentsOf: pullRequests)
                 }
+                self?.isLoading = false
             case .failure(let error):
-                print(error)
+                self?.showFeedback(.error(error.localizedDescription))
             }
         }
     }

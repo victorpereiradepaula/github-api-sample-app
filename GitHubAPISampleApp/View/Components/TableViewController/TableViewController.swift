@@ -7,7 +7,20 @@
 
 import UIKit
 
-class TableViewController<V: TableViewModelProtocol>: UITableViewController, TableViewDelegate {
+class TableViewController<V: TableViewModelProtocol>: UIViewController, UITableViewDelegate, UITableViewDataSource, TableViewDelegate {
+    
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .plain)
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = .systemGroupedBackground
+        tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
+        return tableView
+    }()
+    
+    private var feedbackView: FeedbackView?
+    
     let viewModel: V
     
     init(viewModel: V) {
@@ -22,27 +35,47 @@ class TableViewController<V: TableViewModelProtocol>: UITableViewController, Tab
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.separatorStyle = .none
-        tableView.backgroundColor = .systemGroupedBackground
-        tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
+        view.addSubViewWithAllSideConstraints(tableView)
+        
+        viewModel.viewDidLoad()
     }
     
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    // MARK: UITableViewDelegate
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         viewModel.getNextPageIfNeeded(at: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.didSelectItem(at: indexPath)
     }
 
     // MARK: UITableViewDataSource
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.numberOfItems
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.didSelectItem(at: indexPath)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        #if DEBUG
+        fatalError("Needs override.")
+        #else
+        return tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier, for: indexPath)
+        #endif
     }
     
     // MARK: TableViewDelegate
     func reloadData() {
         tableView.reloadData()
+    }
+    
+    func showFeedback(_ type: FeedbackType) {
+        removeFeedback()
+        let feedbackView = FeedbackView()
+        feedbackView.addFeedback(to: view, type: type)
+        self.feedbackView = feedbackView
+    }
+    
+    func removeFeedback() {
+        feedbackView?.removeFromSuperview()
     }
 }
 
