@@ -28,16 +28,15 @@ open GitHubAPISampleApp.xcworkspace
 
 ## Funcionalidades
 
-- [ ] Lista de repositórios mais populares de Swift
+- [x] Lista de repositórios mais populares de Swift
     - [x] Paginação (scroll infinito)
     - [x] Informações do repositorio por item: nome, descrição, autor (nome/foto), número de estrelas e número de forks
     - [x] Navegação do item para uma página com a lista de pull requests
-- [ ] Lista de pull requests
+- [x] Lista de pull requests
     - [x] Informações do pull request por item: título, autor (nome/foto), data e body
     - [x] Navegação (modal) do item para uma o url da pull request em WebView
-- [ ] Estado de loading
-- [ ] Estado de erro
-- [ ] Testes unitários ViewModel
+- [x] Controle de estados das features
+- [ ] Testes unitários ViewModels
 - [ ] Testes de snapshot dos componentes
 - [ ] Acessibilidade dos componentes (VoiceOver)
 
