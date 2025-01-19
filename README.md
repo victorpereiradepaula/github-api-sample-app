@@ -68,12 +68,26 @@ O projeto é implementado em **MVVM** (Model-View-ViewModel),arquitetura que per
 
 #### FeedbackView
 
-Para utilização da FeedbackView crie uma variável opcional para manter a referência da view
+Para utilização da FeedbackView crie uma variável opcional para manter a referência da view, quando não houver mais necessidade do feedback, basta remover a subview, como no exemplo abaixo com os métodos `showFeedback` e `removeFeedback`:
 
 ```swift
+private var feedbackView: FeedbackView?
 
+...
+
+func showFeedback(_ type: FeedbackType) {
+    let feedbackView = FeedbackView()
+    feedbackView.addFeedback(to: view, type: type)
+    self.feedbackView = feedbackView
+}
+
+func removeFeedback() {
+        feedbackView?.removeFromSuperview()
+        feedbackView = nil
+    }
 ```
 
+>:waning: Podem haver quebras de layout caso seja usado em **UITableViewControler**, uma forma de contornar esse problema é utilizar uma **UIViewController** e adicionar programaticamente a UITableView.
 
 ## Dependências
 

@@ -75,6 +75,7 @@ class PaginatedTableViewController<V: PaginatedTableViewModelProtocol>: UIViewCo
     
     func removeFeedback() {
         feedbackView?.removeFromSuperview()
+        feedbackView = nil
     }
 }
 
